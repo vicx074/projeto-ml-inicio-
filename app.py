@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import pickle, io  
 import numpy as np
+import sys
 
 st.title("Previsão de Falha de Máquinas")
 
@@ -15,6 +16,14 @@ try:
         treino_cols = pickle.load(f)
 except Exception as e:
     st.error(f"Erro ao carregar arquivos: {e}")
+    st.error("""
+    O erro acima ocorreu provavelmente porque os arquivos .pkl foram salvos com joblib.
+    Para resolver:
+    
+    1. Execute o script converter_pkl.py localmente
+    2. Faça commit e push dos novos arquivos .pkl convertidos
+    3. Ou siga o procedimento manual no README
+    """)
     st.stop()
 
 st.write(" Faça upload do arquivo Excel com os dados das máquinas (mesmo formato do treino).")

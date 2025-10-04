@@ -2,18 +2,47 @@
 
 Este projeto utiliza **Machine Learning** para prever falhas em máquinas industriais com base em dados históricos. A aplicação foi desenvolvida com **Streamlit**, uma biblioteca Python que permite criar interfaces web interativas de forma simples e eficiente.
 
-## Novidade: Compatibilidade com Streamlit Cloud e Python 3.13+
-
-- **Agora o projeto utiliza o módulo padrão `pickle` para salvar e carregar arquivos de modelo, scaler e colunas.**
-- **O uso de `joblib` foi removido para evitar incompatibilidades com versões recentes do Python (ex.: 3.13+), especialmente no Streamlit Community Cloud.**
-- **Certifique-se de que os arquivos `modelo_treinado.pkl`, `scaler.pkl` e `treino_cols.pkl` foram salvos usando `pickle.dump` e carregados com `pickle.load`.**
-
 ## Funcionalidades
 
 - **Treinamento de Modelo:** Utiliza **Random Forest** para classificação de falhas.
 - **Interface Web:** Aplicação interativa via **Streamlit** para upload de dados e visualização dos resultados.
 - **Exportação de Resultados:** Permite baixar as previsões em formato Excel diretamente pela interface.
 - **Visualização:** Exibe matriz de confusão, relatório de classificação e importância das variáveis.
+
+## Compatibilidade e Atualizações
+
+- **Compatível com Python 3.13+** e **Streamlit Community Cloud**.
+- **Serialização com Pickle:** Todos os arquivos `.pkl` (modelo, scaler, colunas) agora são salvos e carregados usando `pickle` ao invés de `joblib`, garantindo compatibilidade com versões recentes do Python.
+- **Requisitos simplificados:** Apenas bibliotecas essenciais são necessárias.
+
+### Conversão de arquivos .pkl (joblib → pickle)
+
+Se você encontrar erros relacionados a `distutils` no Streamlit Cloud, é porque seus arquivos `.pkl` ainda estão no formato joblib. Você precisa convertê-los para o formato pickle puro:
+
+**Método 1: Usando o script de conversão**
+
+Execute o script `converter_pkl.py` incluído no repositório:
+```bash
+python converter_pkl.py
+```
+
+**Método 2: Conversão manual**
+
+```python
+import pickle
+import joblib
+
+# Para cada arquivo .pkl
+for arquivo in ["modelo_treinado.pkl", "scaler.pkl", "treino_cols.pkl"]:
+    # Carregar com joblib
+    dados = joblib.load(arquivo)
+    
+    # Salvar com pickle
+    with open(arquivo, "wb") as f:
+        pickle.dump(dados, f)
+```
+
+Após a conversão, faça commit e push dos arquivos `.pkl` atualizados para o seu repositório.
 
 ## Como Funciona o Streamlit
 
@@ -25,7 +54,7 @@ O **Streamlit** é uma biblioteca que transforma scripts Python em aplicativos w
 ## Como Usar
 
 1. **Preparação dos Dados**
-   - Certifique-se de que o arquivo Excel de entrada segue o mesmo formato do arquivo de treino ([`dados_maquinas.xlsx`](dados_maquinas.xlsx )).
+   - Certifique-se de que o arquivo Excel de entrada segue o mesmo formato do arquivo de treino ([`dados_maquinas.xlsx`](dados_maquinas.xlsx)).
    - As colunas devem ser compatíveis com o modelo treinado.
 
 2. **Execução do App**
@@ -47,12 +76,12 @@ O **Streamlit** é uma biblioteca que transforma scripts Python em aplicativos w
 
 ## Estrutura dos Arquivos
 
-- [`app.py`](app.py ): Aplicação principal Streamlit.
-- [`treimaneto.ipynb`](treimaneto.ipynb ): Notebook de treinamento e análise exploratória.
-- [`dados_maquinas.xlsx`](dados_maquinas.xlsx ): Exemplo de dados de entrada.
-- [`modelo_treinado.pkl`](modelo_treinado.pkl ): Modelo treinado (salvo com `pickle`).
-- [`scaler.pkl`](scaler.pkl ): Scaler utilizado na normalização dos dados (salvo com `pickle`).
-- [`treino_cols.pkl`](treino_cols.pkl ): Lista de colunas usadas no treinamento (salvo com `pickle`).
+- [`app.py`](app.py): Aplicação principal Streamlit.
+- [`treimaneto.ipynb`](treimaneto.ipynb): Notebook de treinamento e análise exploratória.
+- [`dados_maquinas.xlsx`](dados_maquinas.xlsx): Exemplo de dados de entrada.
+- [`modelo_treinado.pkl`](modelo_treinado.pkl): Modelo treinado (serializado com pickle).
+- [`scaler.pkl`](scaler.pkl): Scaler utilizado na normalização dos dados (serializado com pickle).
+- [`treino_cols.pkl`](treino_cols.pkl): Lista de colunas usadas no treinamento (serializado com pickle).
 
 ## Requisitos
 
@@ -67,15 +96,13 @@ O **Streamlit** é uma biblioteca que transforma scripts Python em aplicativos w
 
 Instale todos os pacotes com:
 ```bash
-pip install -r requirements.txt
+pip install pandas numpy scikit-learn streamlit seaborn matplotlib openpyxl
 ```
-
-> **Nota:** Não é mais necessário instalar o `joblib`. Todos os arquivos `.pkl` devem ser manipulados com o módulo padrão `pickle`.
 
 ## Fluxo do Projeto
 
-1. **Treinamento:** Execute o notebook para treinar o modelo e salve os arquivos `.pkl` usando `pickle.dump`.
-2. **Previsão:** Use o app Streamlit para realizar previsões em novos dados. Os arquivos são carregados com `pickle.load`.
+1. **Treinamento:** Execute o notebook para treinar o modelo e salvar os arquivos `.pkl` usando pickle.
+2. **Previsão:** Use o app Streamlit para realizar previsões em novos dados.
 
 ## Observações Técnicas
 
@@ -83,13 +110,6 @@ pip install -r requirements.txt
 - **Normalização:** Os dados numéricos são escalados usando o `StandardScaler` antes de serem enviados ao modelo.
 - **Limiar de Classificação:** O slider permite ajustar o limiar de probabilidade para classificar máquinas como falha ou não, tornando o modelo mais flexível.
 - **Exportação:** O arquivo Excel é gerado em memória usando `BytesIO` e pode ser baixado diretamente pela interface.
-
-## Implantação na Streamlit Community Cloud
-
-- O projeto está pronto para ser implantado no [Streamlit Community Cloud](https://streamlit.io/cloud).
-- Certifique-se de que o arquivo `requirements.txt` está simplificado e não possui dependências desnecessárias ou restrições de versão.
-- Todos os arquivos `.pkl` devem ser salvos e carregados com `pickle`.
-- Para outros ambientes (Heroku, Railway, Render), siga as instruções de implantação específicas de cada plataforma.
 
 ## Exemplos de Uso
 
