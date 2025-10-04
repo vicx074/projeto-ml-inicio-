@@ -130,5 +130,3 @@ Victor Eduardo
 [LinkedIn](https://www.linkedin.com/in/victoreduardopereiramorais/)
 
 ---
-
-Sinta-se à vontade para personalizar este README conforme necessário!
