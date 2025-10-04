@@ -2,6 +2,12 @@
 
 Este projeto utiliza **Machine Learning** para prever falhas em máquinas industriais com base em dados históricos. A aplicação foi desenvolvida com **Streamlit**, uma biblioteca Python que permite criar interfaces web interativas de forma simples e eficiente.
 
+## Novidade: Compatibilidade com Streamlit Cloud e Python 3.13+
+
+- **Agora o projeto utiliza o módulo padrão `pickle` para salvar e carregar arquivos de modelo, scaler e colunas.**
+- **O uso de `joblib` foi removido para evitar incompatibilidades com versões recentes do Python (ex.: 3.13+), especialmente no Streamlit Community Cloud.**
+- **Certifique-se de que os arquivos `modelo_treinado.pkl`, `scaler.pkl` e `treino_cols.pkl` foram salvos usando `pickle.dump` e carregados com `pickle.load`.**
+
 ## Funcionalidades
 
 - **Treinamento de Modelo:** Utiliza **Random Forest** para classificação de falhas.
@@ -44,9 +50,9 @@ O **Streamlit** é uma biblioteca que transforma scripts Python em aplicativos w
 - [`app.py`](app.py ): Aplicação principal Streamlit.
 - [`treimaneto.ipynb`](treimaneto.ipynb ): Notebook de treinamento e análise exploratória.
 - [`dados_maquinas.xlsx`](dados_maquinas.xlsx ): Exemplo de dados de entrada.
-- [`modelo_treinado.pkl`](modelo_treinado.pkl ): Modelo treinado.
-- [`scaler.pkl`](scaler.pkl ): Scaler utilizado na normalização dos dados.
-- [`treino_cols.pkl`](treino_cols.pkl ): Lista de colunas usadas no treinamento (necessário para garantir compatibilidade).
+- [`modelo_treinado.pkl`](modelo_treinado.pkl ): Modelo treinado (salvo com `pickle`).
+- [`scaler.pkl`](scaler.pkl ): Scaler utilizado na normalização dos dados (salvo com `pickle`).
+- [`treino_cols.pkl`](treino_cols.pkl ): Lista de colunas usadas no treinamento (salvo com `pickle`).
 
 ## Requisitos
 
@@ -57,18 +63,19 @@ O **Streamlit** é uma biblioteca que transforma scripts Python em aplicativos w
 - Streamlit
 - Seaborn
 - Matplotlib
-- Joblib
 - Openpyxl
 
 Instale todos os pacotes com:
 ```bash
-pip install pandas numpy scikit-learn streamlit seaborn matplotlib joblib openpyxl
+pip install -r requirements.txt
 ```
+
+> **Nota:** Não é mais necessário instalar o `joblib`. Todos os arquivos `.pkl` devem ser manipulados com o módulo padrão `pickle`.
 
 ## Fluxo do Projeto
 
-1. **Treinamento:** Execute o notebook para treinar o modelo e salvar os arquivos `.pkl`.
-2. **Previsão:** Use o app Streamlit para realizar previsões em novos dados.
+1. **Treinamento:** Execute o notebook para treinar o modelo e salve os arquivos `.pkl` usando `pickle.dump`.
+2. **Previsão:** Use o app Streamlit para realizar previsões em novos dados. Os arquivos são carregados com `pickle.load`.
 
 ## Observações Técnicas
 
@@ -76,6 +83,13 @@ pip install pandas numpy scikit-learn streamlit seaborn matplotlib joblib openpy
 - **Normalização:** Os dados numéricos são escalados usando o `StandardScaler` antes de serem enviados ao modelo.
 - **Limiar de Classificação:** O slider permite ajustar o limiar de probabilidade para classificar máquinas como falha ou não, tornando o modelo mais flexível.
 - **Exportação:** O arquivo Excel é gerado em memória usando `BytesIO` e pode ser baixado diretamente pela interface.
+
+## Implantação na Streamlit Community Cloud
+
+- O projeto está pronto para ser implantado no [Streamlit Community Cloud](https://streamlit.io/cloud).
+- Certifique-se de que o arquivo `requirements.txt` está simplificado e não possui dependências desnecessárias ou restrições de versão.
+- Todos os arquivos `.pkl` devem ser salvos e carregados com `pickle`.
+- Para outros ambientes (Heroku, Railway, Render), siga as instruções de implantação específicas de cada plataforma.
 
 ## Exemplos de Uso
 

@@ -1,16 +1,21 @@
 import streamlit as st
 import pandas as pd
-import joblib, io
+import pickle, io  
 import numpy as np
-
-
-
 
 st.title("Previsão de Falha de Máquinas")
 
-# crregar modelo e scaler
-modelo = joblib.load("modelo_treinado.pkl")
-scaler = joblib.load("scaler.pkl")
+# Carregar modelo e scaler
+try:
+    with open("modelo_treinado.pkl", "rb") as f:
+        modelo = pickle.load(f)
+    with open("scaler.pkl", "rb") as f:
+        scaler = pickle.load(f)
+    with open("treino_cols.pkl", "rb") as f:
+        treino_cols = pickle.load(f)
+except Exception as e:
+    st.error(f"Erro ao carregar arquivos: {e}")
+    st.stop()
 
 st.write(" Faça upload do arquivo Excel com os dados das máquinas (mesmo formato do treino).")
 
@@ -32,8 +37,6 @@ if uploaded_file:
     X_cat_encoded = pd.get_dummies(X_cat, drop_first=True)
     X_processed = pd.concat([X_num, X_cat_encoded], axis=1)
 
-    # ajustar colunas para coincidir com treino
-    treino_cols = joblib.load("treino_cols.pkl")
     treino_cols = pd.Index(treino_cols).drop_duplicates()
     X_processed = X_processed.loc[:, ~X_processed.columns.duplicated()]
     X_processed = X_processed.reindex(columns=treino_cols, fill_value=0)
