@@ -15,35 +15,6 @@ Este projeto utiliza **Machine Learning** para prever falhas em máquinas indust
 - **Serialização com Pickle:** Todos os arquivos `.pkl` (modelo, scaler, colunas) agora são salvos e carregados usando `pickle` ao invés de `joblib`, garantindo compatibilidade com versões recentes do Python.
 - **Requisitos simplificados:** Apenas bibliotecas essenciais são necessárias.
 
-### Conversão de arquivos .pkl (joblib → pickle)
-
-Se você encontrar erros relacionados a `distutils` no Streamlit Cloud, é porque seus arquivos `.pkl` ainda estão no formato joblib. Você precisa convertê-los para o formato pickle puro:
-
-**Método 1: Usando o script de conversão**
-
-Execute o script `converter_pkl.py` incluído no repositório:
-```bash
-python converter_pkl.py
-```
-
-**Método 2: Conversão manual**
-
-```python
-import pickle
-import joblib
-
-# Para cada arquivo .pkl
-for arquivo in ["modelo_treinado.pkl", "scaler.pkl", "treino_cols.pkl"]:
-    # Carregar com joblib
-    dados = joblib.load(arquivo)
-    
-    # Salvar com pickle
-    with open(arquivo, "wb") as f:
-        pickle.dump(dados, f)
-```
-
-Após a conversão, faça commit e push dos arquivos `.pkl` atualizados para o seu repositório.
-
 ## Como Funciona o Streamlit
 
 O **Streamlit** é uma biblioteca que transforma scripts Python em aplicativos web interativos. Ele funciona com base em uma abordagem declarativa, onde cada execução do script atualiza a interface. Alguns pontos importantes:
